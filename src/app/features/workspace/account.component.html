@@ -1,0 +1,19 @@
+<div class="container account-layout">
+<aside class="account-sidebar">
+<span class="eyebrow">YOUR JERRY SPACE</span>
+<h2>Hello, Ananya.</h2>
+<span class="demo-pill">Customer preview</span>
+<nav aria-label="Customer account">@for(item of links;track item.path){<a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{exact:item.path==='/account'}">
+<j-icon [name]="item.icon"/>{{item.label}}</a>}</nav>
+<div class="account-help">
+<j-icon name="tool"/>
+<h3>Here when you need us.</h3>
+<p>Device trouble? Start a service request.</p>
+<a routerLink="/account/services/new" class="text-link">Let’s get it sorted <j-icon name="arrow"/>
+</a>
+</div>
+</aside>
+<div class="account-main">
+<router-outlet/>
+</div>
+</div>

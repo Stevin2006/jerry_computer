@@ -1,0 +1,111 @@
+<div class="container page-space info-page">
+<nav class="breadcrumbs">
+<a routerLink="/">Home</a>
+<j-icon name="chevron"/>
+<span>{{title}}</span>
+</nav>
+<div class="page-heading">
+<div>
+<span class="eyebrow">JERRY COMPUTERS</span>
+<h1>{{title}}</h1>
+<p>{{subtitle}}</p>
+</div>
+</div>@switch(kind){@case('services'){<div class="service-category-grid">@for(c of data.categories.slice(0,2).concat(data.categories.slice(6));track c.slug){<article class="panel">
+<j-icon [name]="c.icon"/>
+<h2>{{c.name==='Laptops'?'Laptop repair':c.name==='Desktops'?'Desktop diagnostics':c.name==='CCTV'?'CCTV service':'Printer servicing'}}</h2>
+<p>Tell us what’s happening. Choose an in-store appointment or request an on-site visit. Our service team will confirm the next steps.</p>
+<a routerLink="/account/services/new" class="text-link">Request service <j-icon name="arrow"/>
+</a>
+</article>}</div>
+<div class="soft-panel">
+<h2>A clear path back to working.</h2>
+<div class="steps-row">
+<span>01 · Tell us about your device</span>
+<span>02 · Arrange a diagnosis</span>
+<span>03 · Review your estimate</span>
+<span>04 · Testing & handover</span>
+</div>
+<p>No repair or parts replacement is confirmed in this frontend preview.</p>
+</div>}@case('about'){<div class="editorial-banner">
+<div>
+<h2>Technology should<br>move you forward.</h2>
+<p>Jerry Computers brings computer retail and device service into one straightforward experience. Find hardware for your work, build a better setup, and keep track of service from the same place.</p>
+<a routerLink="/shop" class="btn btn-primary">Find your next upgrade <j-icon name="arrow"/>
+</a>
+</div>
+<img src="/devices.svg#monitor" width="480" height="340" alt="Desktop computer illustration"/>
+</div>
+<div class="benefit-grid">
+<article>
+<j-icon name="user"/>
+<h3>Advice that starts with you</h3>
+<p>Your needs come first, whether you are choosing a laptop or troubleshooting a printer.</p>
+</article>
+<article>
+<j-icon name="tool"/>
+<h3>A practical approach to support</h3>
+<p>Device details, diagnosis and work updates in one clear service journey.</p>
+</article>
+<article>
+<j-icon name="shield"/>
+<h3>Clarity at every step</h3>
+<p>Product specifications, service estimates and warranty guidance without the guesswork.</p>
+</article>
+</div>}@case('contact'){<div class="two-column">
+<section class="panel">
+<h2>Come say hello.</h2>@for(branch of data.brand().branches;track branch.id){<div class="branch-info">
+<j-icon name="location"/>
+<div>
+<h3>{{branch.name}}</h3>
+<p>{{branch.address}}</p>
+<p>{{branch.phone}}</p>
+<span class="badge">Opening hours awaiting confirmation</span>
+</div>
+</div>}<div class="map-placeholder">
+<j-icon name="location"/>
+<strong>Store location coming soon</strong>
+<span>A map will appear once the branch location is configured.</span>
+</div>
+</section>
+<section class="panel">
+<h2>How can we help?</h2>
+<p>Choose the right place to start.</p>
+<a routerLink="/shop" class="contact-option">
+<j-icon name="laptop"/>
+<div>
+<strong>Find a product</strong>
+<p>Explore our sample catalogue.</p>
+</div>
+<j-icon name="arrow"/>
+</a>
+<a routerLink="/account/services/new" class="contact-option">
+<j-icon name="tool"/>
+<div>
+<strong>Request a repair</strong>
+<p>Tell our service team about your device.</p>
+</div>
+<j-icon name="arrow"/>
+</a>
+<a routerLink="/account/orders" class="contact-option">
+<j-icon name="box"/>
+<div>
+<strong>Check an order</strong>
+<p>Your order and shipment details.</p>
+</div>
+<j-icon name="arrow"/>
+</a>
+<p class="small muted">Official phone, email and social links have not been supplied. No contact details have been invented.</p>
+</section>
+</div>}@case('privacy'){<article class="legal-copy panel">
+<h2>Privacy in this frontend preview</h2>
+<p>This application currently uses sample records held in browser memory. Form data is not submitted to a backend, and browser location is requested only when you select a location action.</p>
+<h3>Your choices</h3>
+<p>You can enter an address manually instead of sharing browser location. No authentication tokens are stored in browser storage.</p>
+<h3>Production policy</h3>
+<p>Jerry Computers must supply its approved privacy policy, contact information, data retention rules and data rights process before production launch.</p>
+</article>}@default{<article class="legal-copy panel">
+<h2>Frontend preview terms</h2>
+<p>Products, pricing, availability and operational records are illustrative. No purchases, payments, repair commitments or payroll approvals can be completed here.</p>
+<h3>Before launch</h3>
+<p>Store-approved terms, returns, shipping, warranty and service policies must be provided and reviewed before accepting real orders.</p>
+</article>}}</div>

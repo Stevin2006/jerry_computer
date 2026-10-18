@@ -1,0 +1,200 @@
+<j-data-region label="Overview">
+<div class="workspace-page">
+<div class="page-heading">
+<div>
+<span class="eyebrow">{{isCustomer()?'YOUR EVERYDAY, A LITTLE EASIER':role()==='engineer'?'YOUR SERVICE DAY':'WORKSPACE OVERVIEW'}}</span>
+<h1>{{title()}}</h1>
+<p>{{isCustomer()?'Your orders, devices and updates. Together in one place.':'Sunday, 18 October 2026 · Sample operational data'}}</p>
+</div>@if(isService()){<a [routerLink]="role()==='engineer'?'/engineer/jobs':'/office/services/new'" class="btn btn-primary">
+<j-icon [name]="role()==='engineer'?'tool':'plus'"/>{{role()==='engineer'?'View my jobs':'New service intake'}}</a>}@else{<a [routerLink]="isCustomer()?'/shop':'/'+role()+'/reports'" class="btn btn-outline">{{isCustomer()?'Find your next upgrade':'View reports'}} <j-icon name="arrow"/>
+</a>}</div>
+<div class="demo-banner">
+<span class="live-dot">
+</span> Demo workspace · Metrics reflect sample records. No live business data is connected.</div>
+<div class="stats-grid" [class.three]="isCustomer()">@for(m of metrics();track m.label){<article class="stat-card">
+<div>
+<span>{{m.label}}</span>
+<j-icon [name]="m.icon"/>
+</div>
+<strong>{{m.value}}</strong>
+<small>{{m.change}}</small>
+</article>}</div>
+@if(role()==='ecommerce'){<div class="stage-strip">@for(stage of orderStages();track stage.label){<div>
+<span>{{stage.label}}</span>
+<strong>{{stage.count}}</strong>
+</div>}</div>}@if(isService()){<div class="dashboard-columns">
+<section>
+<div class="section-heading compact">
+<h2>{{role()==='engineer'?'Your next jobs':'Service action queue'}}</h2>
+<a [routerLink]="'/'+role()+'/'+(role()==='engineer'?'jobs':'services')" class="text-link">View all <j-icon name="arrow"/>
+</a>
+</div>
+<div class="job-list">@for(t of tickets();track t.id){<a [routerLink]="'/'+role()+'/'+(role()==='engineer'?'jobs':'services')+'/'+t.id" class="job-card">
+<div class="job-card-top">
+<span class="mono">{{t.id}}</span>
+<j-badge [text]="t.priority"/>
+</div>
+<h3>{{t.device}}</h3>
+<p>{{t.issue}}</p>
+<div class="job-card-meta">
+<span>
+<j-icon name="user"/>{{t.customer}}</span>
+<span>
+<j-icon name="clock"/>{{t.appointment.replace('T',' · ')}}</span>
+</div>
+<div class="job-card-footer">
+<j-badge [text]="t.status"/>
+<span>{{t.mode}} <j-icon name="arrow"/>
+</span>
+</div>
+</a>}</div>
+</section>
+<aside>@if(role()!=='engineer'){<section class="panel">
+<div class="panel-heading">
+<h2>People behind the service</h2>
+<j-icon name="user"/>
+</div>@for(e of data.engineers();track e.id){<div class="engineer-row">
+<span class="avatar">{{e.initials}}</span>
+<div>
+<strong>{{e.name}}</strong>
+<small>{{e.skills.join(' · ')}}</small>
+<div class="workload-bar">
+<span [style.width.%]="e.jobs*30">
+</span>
+</div>
+</div>
+<div>
+<j-badge [text]="e.status"/>
+<small>{{e.jobs}} active jobs</small>
+</div>
+</div>}</section>
+<section class="priority-callout">
+<j-icon name="flag"/>
+<h3>One critical request needs dispatch.</h3>
+<p>SR-2040 · CCTV system<br>Review the issue and engineer availability.</p>
+<a routerLink="/office/dispatch" class="text-link">Open dispatch <j-icon name="arrow"/>
+</a>
+</section>}<section class="panel">
+<h3>{{role()==='engineer'?'Your job stages':'Service queue, at a glance'}}</h3>
+<dl class="summary-list">
+<div>
+<dt>Awaiting approval</dt>
+<dd>0</dd>
+</div>
+<div>
+<dt>Awaiting parts</dt>
+<dd>{{role()==='engineer'?0:1}}</dd>
+</div>
+<div>
+<dt>Testing</dt>
+<dd>1</dd>
+</div>
+<div>
+<dt>Escalations</dt>
+<dd>{{data.escalations().length}}</dd>
+</div>
+</dl>
+<small class="muted">Counts from demo records only.</small>
+</section>
+</aside>
+</div>}@else{<div class="dashboard-columns">
+<section>@if(!isCustomer()){<article class="panel chart-panel">
+<div class="panel-heading">
+<div>
+<h2>Commerce, in perspective</h2>
+<p class="muted small">Illustrative weekly trend · INR</p>
+</div>
+<span class="demo-pill">Sample trend</span>
+</div>
+<div class="bar-chart" role="img" aria-label="Illustrative weekly order values, Monday to Sunday. These values are demo data.">@for(bar of data.dashboardTrend;track $index){<div>
+<span [style.height.%]="bar">
+</span>
+<small>{{['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][$index]}}</small>
+</div>}</div>
+<div class="chart-footer">
+<span>
+<i class="legend-dot">
+</i> Sample order value</span>
+<a [routerLink]="'/'+role()+'/orders'" class="text-link">Explore orders <j-icon name="arrow"/>
+</a>
+</div>
+</article>}<div class="section-heading compact">
+<h2>{{isCustomer()?'Your recent orders':'Recent orders'}}</h2>
+<a [routerLink]="'/'+role()+'/orders'" class="text-link">View all <j-icon name="arrow"/>
+</a>
+</div>
+<j-data-table label="Recent orders" [columns]="columns" [rows]="rows()"/>
+</section>
+<aside>@if(isCustomer()){<section class="account-service-panel">
+<span class="eyebrow">A LITTLE DEVICE CARE</span>
+<j-icon name="tool"/>
+<h2>Your HP Pavilion<br>is in good hands.</h2>
+<j-badge text="In progress"/>
+<p>Vishnu is inspecting the cooling system. Follow the diagnosis and next steps.</p>
+<a routerLink="/account/services/SR-2041" class="btn btn-primary">View service update <j-icon name="arrow"/>
+</a>
+</section>}@else{<section class="panel">
+<div class="panel-heading">
+<h2>Needs a closer look</h2>
+<j-icon name="flag"/>
+</div>
+<a [routerLink]="'/'+role()+'/orders/JC-1046'" class="action-queue-row">
+<span class="queue-icon warning">
+<j-icon name="wallet"/>
+</span>
+<div>
+<strong>Verify a payment</strong>
+<p>JC-1046 · ₹78,990</p>
+</div>
+<j-icon name="chevron"/>
+</a>@if(role()==='admin'){<a routerLink="/admin/inventory" class="action-queue-row">
+<span class="queue-icon danger">
+<j-icon name="box"/>
+</span>
+<div>
+<strong>Review low inventory</strong>
+<p>Kingston NV2 · 3 units left</p>
+</div>
+<j-icon name="chevron"/>
+</a>
+<a routerLink="/admin/dispatch" class="action-queue-row">
+<span class="queue-icon">
+<j-icon name="tool"/>
+</span>
+<div>
+<strong>Assign a critical service</strong>
+<p>SR-2040 · CCTV</p>
+</div>
+<j-icon name="chevron"/>
+</a>}</section>@if(role()==='admin'){<section class="panel">
+<h3>Workforce snapshot</h3>
+<dl class="summary-list">
+<div>
+<dt>Attendance records today</dt>
+<dd>2</dd>
+</div>
+<div>
+<dt>Verification</dt>
+<dd>Pending API</dd>
+</div>
+<div>
+<dt>October payroll</dt>
+<dd>
+<j-badge text="Draft · demo"/>
+</dd>
+</div>
+</dl>
+</section>}}<section class="panel activity-panel">
+<h3>Recent updates</h3>@for(n of data.notifications().slice(0,3);track n.id){<div class="activity-row">
+<i>
+</i>
+<div>
+<strong>{{n.title}}</strong>
+<p>{{n.detail}}</p>
+<small>{{n.date}}</small>
+</div>
+</div>}</section>
+</aside>
+</div>}</div>
+
+</j-data-region>

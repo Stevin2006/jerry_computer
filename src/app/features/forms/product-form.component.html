@@ -1,0 +1,89 @@
+<div class="workspace-page">
+<nav class="breadcrumbs">
+<a routerLink="/admin/products">Products</a>
+<j-icon name="chevron"/>
+<span>{{editing?'Edit product':'New product'}}</span>
+</nav>
+<div class="page-heading">
+<div>
+<span class="eyebrow">CATALOGUE WORKSPACE</span>
+<h1>{{editing?'A little more detail. A better product page.':'Make a good first impression.'}}</h1>
+<p>Prepare clear product information, specifications and imagery.</p>
+</div>
+<button class="btn btn-primary" (click)="submit()">Review product <j-icon name="arrow"/>
+</button>
+</div>
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+<div class="form-with-aside">
+<div>
+<section class="form-section">
+<h2>The essentials</h2>
+<div class="form-grid">
+<label class="span-2">Product name<input formControlName="name" [attr.aria-invalid]="submitted()&&form.controls.name.invalid"/>
+</label>
+<label>Brand<input formControlName="brand" [attr.aria-invalid]="submitted()&&form.controls.brand.invalid"/>
+</label>
+<label>SKU<input formControlName="sku"/>
+</label>
+<label>Category<select formControlName="category">@for(c of data.categories;track c.slug){<option [value]="c.slug">{{c.name}}</option>}</select>
+</label>
+<label>Visibility<select formControlName="visibility">
+<option>Draft</option>
+<option>Published</option>
+</select>
+</label>
+<label class="span-2">Description<textarea formControlName="description" rows="5" [attr.aria-invalid]="submitted()&&form.controls.description.invalid">
+</textarea>
+</label>
+</div>
+</section>
+<section class="form-section">
+<h2>Product images</h2>
+<j-uploader title="Add product photography"/>
+<p class="small muted">Use the arrow controls to reorder selected images. Persistent image storage requires a media API; preview images stay local.</p>
+</section>
+<section class="form-section">
+<h2>Pricing & availability</h2>
+<div class="form-grid">
+<label>Sale price (INR)<input type="number" min="1" formControlName="price"/>
+</label>
+<label>Original price (INR)<input type="number" min="0" formControlName="originalPrice"/>
+</label>
+<label>Display stock<input type="number" min="0" formControlName="stock"/>
+<span class="field-hint">Authoritative stock is supplied by inventory API.</span>
+</label>
+</div>
+</section>
+<section class="form-section">
+<div class="panel-heading">
+<h2>Specifications</h2>
+<button class="btn btn-outline" type="button" (click)="addSpec()">
+<j-icon name="plus"/>Add specification</button>
+</div>
+<div formArrayName="specs">@for(spec of specs.controls;track spec;let i=$index){<div class="spec-editor-row" [formGroupName]="i">
+<label>Attribute<input formControlName="key" placeholder="e.g. Processor"/>
+</label>
+<label>Value<input formControlName="value" placeholder="e.g. Intel Core i5"/>
+</label>
+<button type="button" class="icon-button" [attr.aria-label]="'Remove specification '+(i+1)" (click)="specs.removeAt(i)">
+<j-icon name="trash"/>
+</button>
+</div>}</div>
+</section>@if(submitted()&&form.invalid){<p class="field-error" role="alert">Add a name, brand, description of at least 20 characters and valid positive pricing. Specification fields cannot be blank.</p>}<div class="form-footer">
+<a routerLink="/admin/products" class="btn btn-outline">Back to products</a>
+<button class="btn btn-primary" type="submit">Review for API</button>
+</div>
+</div>
+<aside class="form-guide">
+<span class="eyebrow">PRODUCT PREVIEW</span>
+<img [src]="product()?.image??'/devices.svg#laptop'" alt="Illustrative product preview" width="320" height="230"/>
+<small>{{form.controls.brand.value||'Your brand'}}</small>
+<h2>{{form.controls.name.value||'A new possibility.'}}</h2>
+<strong class="preview-price">{{form.controls.price.value|currency:'INR':'symbol':'1.0-0'}}</strong>
+<p>{{form.controls.description.value||'Your product description will appear here.'}}</p>
+<span class="badge">{{form.controls.visibility.value}} · local preview</span>
+<div class="alert warning">This form does not publish or change a product. Catalogue persistence will be connected to the API.</div>
+</aside>
+</div>
+</form>
+</div>

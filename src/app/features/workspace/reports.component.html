@@ -1,0 +1,60 @@
+<j-data-region label="Reports">
+<div class="workspace-page">
+<div class="page-heading">
+<div>
+<span class="eyebrow">{{engineer?'YOUR PERSONAL VIEW':'REPORTS & ANALYTICS'}}</span>
+<h1>{{engineer?'A little perspective on your progress.':'A clearer view of what’s moving.'}}</h1>
+<p>Explore illustrative trends alongside the sample operational records.</p>
+</div>
+<label>Sample period<select (change)="data.integration('Historical reporting periods')">
+<option>October 2026 · demo</option>
+<option>September 2026 · demo</option>
+</select>
+</label>
+</div>
+<div class="demo-banner">All trend values are illustrative. Payroll values are supplied mock figures; no payroll calculations are performed.</div>
+<div class="tabs scroll-tabs" role="group" aria-label="Report area">@for(t of tabs;track t){<button [class.active]="tab()===t" (click)="tab.set(t)">{{t}}</button>}</div>
+<div class="stats-grid">@for(m of metrics();track m.label){<article class="stat-card">
+<div>
+<span>{{m.label}}</span>
+<j-icon name="chart"/>
+</div>
+<strong>{{m.value}}</strong>
+<small>Illustrative · {{tab().toLowerCase()}} report</small>
+</article>}</div>
+<div class="two-column">
+<section class="panel chart-panel">
+<div class="panel-heading">
+<h2>{{tab()}} trend</h2>
+<span class="demo-pill">Demo data</span>
+</div>
+<div class="bar-chart" role="img" [attr.aria-label]="'Illustrative '+tab()+' trend over six weeks'">@for(v of bars();track $index){<div>
+<span [style.height.%]="v">
+</span>
+<small>Week {{$index+1}}</small>
+</div>}</div>
+<p class="small muted">Trend series will be supplied by the reporting API.</p>
+</section>
+<section class="panel">
+<h2>{{tab()==='Service'?'Service status distribution':tab()==='Inventory'?'Availability distribution':'Operational breakdown'}}</h2>
+<div class="distribution-chart">@for(item of distribution();track item.label){<div>
+<div class="range-labels">
+<span>{{item.label}}</span>
+<strong>{{item.value}}</strong>
+</div>
+<div class="workload-bar">
+<span [style.width.%]="item.width">
+</span>
+</div>
+</div>}</div>
+<p class="small muted">Sample breakdown for visual design review.</p>
+</section>
+</div>
+<div class="section-heading compact">
+<h2>{{tab()}} records</h2>
+<span class="muted">Export the current sample view below</span>
+</div>
+<j-data-table [label]="tab()+' report'" [columns]="columns()" [rows]="rows()" (inspect)="data.integration('Report record detail')"/>
+</div>
+
+</j-data-region>

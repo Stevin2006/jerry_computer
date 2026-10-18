@@ -1,0 +1,17 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { quantityWithinStock, cartSubtotal, customerLogs, canTransition, filterProducts } from '../src/app/core/domain.mjs';
+const products=[{id:'a',name:'ASUS Laptop',brand:'ASUS',category:'laptops',price:53000,stock:2},{id:'b',name:'Dell Monitor',brand:'Dell',category:'desktops',price:11000,stock:0},{id:'c',name:'ASUS Mouse',brand:'ASUS',category:'accessories',price:2000,stock:7}];
+test('cart quantity cannot exceed current display stock',()=>assert.equal(quantityWithinStock(9,2),2));
+test('negative, fractional and non-finite quantities are safely normalised',()=>{assert.equal(quantityWithinStock(-1,4),0);assert.equal(quantityWithinStock(2.9,4),2);assert.equal(quantityWithinStock(NaN,4),0);assert.equal(quantityWithinStock(Infinity,4),0);});
+test('cart subtotal uses quantity without delivery or tax fabrication',()=>assert.equal(cartSubtotal([{product:products[0],quantity:2},{product:products[2],quantity:3}]),112000));
+test('empty cart has a zero subtotal',()=>assert.equal(cartSubtotal([]),0));
+test('customer logs exclude every internal entry and preserve chronology',()=>{const logs=[{id:'a',visibility:'customer'},{id:'b',visibility:'internal'},{id:'c',visibility:'customer'}];assert.deepEqual(customerLogs(logs).map(l=>l.id),['a','c']);assert.equal(logs.length,3);});
+test('engineer job progresses through allowed local stages',()=>{for(const pair of [['Assigned','Accepted'],['Accepted','Diagnosis'],['Diagnosis','In progress'],['In progress','Testing'],['Testing','Completed']])assert.ok(canTransition(...pair));});
+test('job cannot skip diagnosis or reopen a completed record',()=>{assert.equal(canTransition('Assigned','Completed'),false);assert.equal(canTransition('Completed','In progress'),false);assert.equal(canTransition('Unknown','Accepted'),false);});
+test('waiting for approval can resume and escalation is explicit',()=>{assert.ok(canTransition('Awaiting approval','In progress'));assert.ok(canTransition('In progress','Escalated'));});
+test('catalogue search matches brand and name case-insensitively',()=>assert.deepEqual(filterProducts(products,{query:'asus'}).map(p=>p.id),['a','c']));
+test('combined category, price and stock filters narrow the catalogue',()=>assert.deepEqual(filterProducts(products,{category:'accessories',brand:'ASUS',maxPrice:5000,inStock:true}).map(p=>p.id),['c']));
+test('out of stock products are hidden only when the shopper requests it',()=>{assert.equal(filterProducts(products).length,3);assert.deepEqual(filterProducts(products,{inStock:true}).map(p=>p.id),['a','c']);});
+test('sort never mutates service-owned catalogue order',()=>{assert.deepEqual(filterProducts(products,{sort:'price-low'}).map(p=>p.id),['c','b','a']);assert.deepEqual(filterProducts(products,{sort:'price-high'}).map(p=>p.id),['a','b','c']);assert.deepEqual(products.map(p=>p.id),['a','b','c']);});
+test('empty results and no-products state are valid',()=>{assert.deepEqual(filterProducts(products,{query:'printer'}),[]);assert.deepEqual(filterProducts([]),[]);});

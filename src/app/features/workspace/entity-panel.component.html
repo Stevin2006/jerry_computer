@@ -1,0 +1,32 @@
+<dialog #dialog class="drawer-dialog" (close)="closed.emit()" aria-labelledby="entity-title">
+<div class="drawer-heading">
+<div>
+<span class="eyebrow">{{row().id==='new'?'NEW RECORD':'RECORD DETAILS'}} · DEMO</span>
+<h2 id="entity-title">{{title()}}</h2>
+</div>
+<button class="icon-button" aria-label="Close details" (click)="dialog.close()">
+<j-icon name="close"/>
+</button>
+</div>
+<p class="muted">{{row().id==='new'?'Prepare a record for future API integration.':'Reference: '+row().id}}</p>
+@if(kind()==='shipments') {<section class="drawer-history"><h3>Shipment journey</h3><j-timeline [entries]="shipmentTimeline()"/><p class="small muted">Tracking events are demo order records. No courier feed is connected.</p></section>}
+@if(kind()==='customers') {<section class="drawer-history"><h3>Orders & service history</h3>@for(order of relatedOrders();track order.id){<a [routerLink]="historyBase()+'/orders/'+order.id" class="history-link"><strong>{{order.id}}</strong><span>{{order.date}} · {{order.status}}</span></a>}@for(ticket of relatedTickets();track ticket.id){<a [routerLink]="'/admin/services/'+ticket.id" class="history-link"><strong>{{ticket.id}} · {{ticket.device}}</strong><span>{{ticket.status}}</span></a>}<p class="small muted">Verified contact information will be supplied by the customer API.</p></section>}
+@if(kind()==='escalations') {<section class="drawer-history"><h3>Escalation history</h3><ol class="plain-steps"><li>Engineer findings recorded · demo</li><li>Senior engineer review requested · demo</li><li>Awaiting backend assignment and resolution updates</li></ol></section>}
+<form [formGroup]="form" (ngSubmit)="submit()" class="form-stack">@for(field of fields();track field.name){<label>{{field.label}}@if(field.required){<span aria-hidden="true"> *</span>}@if(field.options){<select [formControlName]="field.name">@for(option of field.options;track option){<option>{{option}}</option>}</select>}@else if(field.type==='textarea'){<textarea [formControlName]="field.name" rows="3">
+</textarea>}@else{<input [type]="field.type??'text'" [formControlName]="field.name" [min]="field.name==='latitude'?-90:field.name==='longitude'?-180:field.type==='number'?0:null"/>}</label>}@if(kind()==='staff'||kind()==='engineers'){<fieldset>
+<legend>Capabilities · frontend visibility only</legend>
+<label class="check-row">
+<input type="checkbox" formControlName="view"/>View assigned workspace</label>
+<label class="check-row">
+<input type="checkbox" formControlName="manageOrders"/>Manage orders</label>
+<label class="check-row">
+<input type="checkbox" formControlName="manageServices"/>Manage service tickets</label>
+<label class="check-row">
+<input type="checkbox" formControlName="manageStaff"/>Manage staff · elevated privilege</label>
+<p class="field-hint">Backend authorization must enforce all real capabilities.</p>
+</fieldset>}@if(kind()==='escalations'){<j-uploader title="Add escalation attachments"/>}<div class="alert warning">{{kind()==='attendance'?'Corrections require backend audit history. No attendance record will be changed.':kind()==='locations'?'Default location requirement: 200 meters. This form does not verify geofences.':kind()==='inventory'?'Stock adjustments require backend validation and an audit record. No stock will be changed.':'This record will be connected to the service API. No changes are saved.'}}</div>@if(form.invalid&&attempted){<p class="field-error" role="alert">Complete the required fields and check numeric values.</p>}<div class="dialog-actions">
+<button type="button" class="btn btn-outline" (click)="dialog.close()">Close</button>
+<button class="btn btn-primary" type="submit" [disabled]="!permitted()">Review {{kind()==='staff'?'invitation':'changes'}} <j-icon name="arrow"/>
+</button>
+</div>@if(!permitted()){<p class="field-error">This preview role does not have permission to change this record.</p>}</form>
+</dialog>

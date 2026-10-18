@@ -1,0 +1,82 @@
+<div class="workspace-page attendance-page">
+<div class="page-heading">
+<div>
+<span class="eyebrow">YOUR WORKDAY</span>
+<h1>A clear start. A clear record.</h1>
+<p>Today’s attendance and your recent work history.</p>
+</div>
+</div>
+<div class="demo-banner">Attendance preview · Browser location is real when requested. Attendance verification is not connected.</div>
+<section class="attendance-today">
+<div>
+<span class="eyebrow">SUNDAY, 18 OCTOBER</span>
+<h2>{{action()==='check-out'?'Ready to wrap up?':'Ready to begin?'}}</h2>
+<p>Vishnu Kumar · Main showroom</p>
+<j-badge [text]="status()"/>
+</div>
+<div class="attendance-clock">
+<j-icon name="clock"/>
+<strong>— : —</strong>
+<span>Working duration supplied by attendance API</span>
+</div>
+</section>
+<div class="two-column">
+<section class="panel">
+<h2>Check in / check out</h2>
+<p>Select an action, then share your browser location if you choose.</p>
+<div class="attendance-actions">
+<button class="btn" [class.btn-primary]="action()==='check-in'" [class.btn-outline]="action()!=='check-in'" (click)="action.set('check-in')">Check in</button>
+<button class="btn" [class.btn-primary]="action()==='check-out'" [class.btn-outline]="action()!=='check-out'" (click)="action.set('check-out')">Check out</button>
+</div>
+<j-location #location/>
+<button class="btn btn-primary full-width" (click)="review()">Review {{action()}} request <j-icon name="arrow"/>
+</button>
+<p role="status" class="small muted">{{message()}}</p>
+</section>
+<section class="panel">
+<h2>Location verification</h2>
+<p>Configured default requirement: <strong>200 meters</strong> from the assigned office location.</p>
+<div class="verification-steps">
+<div>
+<span>1</span>
+<div>
+<strong>Browser location</strong>
+<p>Captured only after your explicit action.</p>
+</div>
+</div>
+<div>
+<span>2</span>
+<div>
+<strong>Backend verification</strong>
+<p>Pending service API. No geofence decision is made here.</p>
+</div>
+</div>
+<div>
+<span>3</span>
+<div>
+<strong>Attendance record</strong>
+<p>Created by the backend after verification.</p>
+</div>
+</div>
+</div>
+<label>Inspect a verification state<select (change)="status.set($any($event.target).value)">
+<option>Not checked in · demo</option>
+<option>Requesting location · preview</option>
+<option>Location captured · preview</option>
+<option>Location rejected · preview</option>
+<option>Location unavailable · preview</option>
+<option>Verification pending · preview</option>
+<option>Verified · preview only</option>
+<option>Verification failed · preview only</option>
+</select>
+</label>
+<p class="small muted">State previews do not verify your location or record attendance.</p>
+</section>
+</div>
+<div class="section-heading compact">
+<h2>Your attendance history</h2>
+<a routerLink="/engineer/performance" class="text-link">View performance <j-icon name="arrow"/>
+</a>
+</div>
+<j-data-table label="Attendance history" [rows]="rows" [columns]="columns" (inspect)="data.integration('Attendance record detail')"/>
+</div>

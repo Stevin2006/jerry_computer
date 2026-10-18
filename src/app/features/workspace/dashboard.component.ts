@@ -1,0 +1,23 @@
+import { DataRegionComponent } from '../../shared/data-region.component';
+import { Component, computed, inject } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { DataService } from '../../core/data.service';
+import { pageContext } from './context';
+import { IconComponent } from '../../shared/icon.component';
+import { BadgeComponent } from '../../shared/ui.component';
+import { DataTableComponent, TableColumn, TableRow } from '../../shared/data-table.component';
+@Component({ selector: 'j-dashboard', imports: [DataRegionComponent, RouterLink, CurrencyPipe, IconComponent, BadgeComponent, DataTableComponent], templateUrl: './dashboard.component.html' })
+export class DashboardComponent {
+    data = inject(DataService);
+    ctx = pageContext();
+    role = this.ctx.role;
+    isCustomer = computed(() => this.role() === 'account');
+    isService = computed(() => ['office', 'engineer'].includes(this.role()));
+    title = computed(() => ({ account: 'A little more connected.', admin: 'The bigger picture. The next right move.', ecommerce: 'A good day to get orders moving.', office: 'Good service starts with a clear view.', engineer: 'Let’s get things working, Vishnu.' } as Record<string, string>)[this.role()] ?? 'Workspace overview');
+    metrics = computed(() => this.isCustomer() ? [{ label: 'Your orders', value: String(this.data.orders().filter(o => o.customer === 'Ananya Menon').length), change: 'Sample account records', icon: 'box' }, { label: 'Active service requests', value: String(this.data.tickets().filter(t => t.customer === 'Ananya Menon').length), change: 'Keep up with your device', icon: 'tool' }, { label: 'Unread updates', value: String(this.data.unread()), change: 'A few things to catch up on', icon: 'bell' }] : this.role() === 'engineer' ? [{ label: 'Assigned to you', value: String(this.tickets().length), change: 'Your demo assignments', icon: 'tool' }, { label: 'In progress', value: String(this.tickets().filter(t => t.status === 'In progress').length), change: 'Continue diagnosis and work', icon: 'clock' }, { label: 'Testing', value: String(this.tickets().filter(t => t.status === 'Testing').length), change: 'Review test results before completion', icon: 'check' }, { label: 'Awaiting parts', value: String(this.tickets().filter(t => t.status === 'Awaiting parts').length), change: 'Parts status supplied by service API', icon: 'box' }] : this.isService() ? [{ label: 'Open service tickets', value: String(this.data.tickets().length), change: 'Demo queue', icon: 'tool' }, { label: 'Needs assignment', value: String(this.data.tickets().filter(t => t.engineer === 'Unassigned').length), change: 'Ready for dispatch review', icon: 'user' }, { label: 'High & critical', value: String(this.data.tickets().filter(t => ['High', 'Critical'].includes(t.priority)).length), change: 'Prioritise your next action', icon: 'flag' }, { label: 'Engineers available', value: String(this.data.engineers().filter(e => e.status === 'Available').length), change: 'Sample availability', icon: 'clock' }] : [{ label: 'Sample order value', value: '₹' + this.data.orders().reduce((sum, o) => sum + o.total, 0).toLocaleString('en-IN'), change: '4 demo orders · not live revenue', icon: 'wallet' }, { label: 'Orders to review', value: String(this.data.orders().filter(o => o.status === 'Verification').length), change: 'Payment verification required', icon: 'orders' }, { label: 'Low-stock products', value: String(this.data.products().filter(p => p.stock < 5).length), change: 'One item out of stock', icon: 'box' }, { label: 'Open service tickets', value: String(this.data.tickets().length), change: 'Across the sample service queue', icon: 'tool' }]);
+    orderStages = computed(() => ['New', 'Verification', 'Processing', 'Packed', 'Awaiting courier', 'Shipped', 'Issues'].map(status => ({ label: status === 'Verification' ? 'Awaiting verification' : status, count: this.data.orders().filter(o => o.status === status).length })));
+    columns: TableColumn[] = [{ key: 'id', label: 'Order' }, { key: 'customer', label: 'Customer' }, { key: 'total', label: 'Total' }, { key: 'status', label: 'Status', badge: true }];
+    rows = computed<TableRow[]>(() => this.data.orders().filter(o => !this.isCustomer() || o.customer === 'Ananya Menon').slice(0, 4).map(o => ({ id: o.id, customer: o.customer, total: '₹' + o.total.toLocaleString('en-IN'), status: o.status, link: `/${this.isCustomer() ? 'account' : this.role()}/orders/${o.id}` })));
+    tickets = computed(() => this.data.tickets().filter(t => this.role() !== 'engineer' || t.engineer === 'Vishnu Kumar'));
+}

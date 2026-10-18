@@ -1,0 +1,121 @@
+<j-data-region label="Order details">
+<div class="workspace-page">
+<nav class="breadcrumbs">
+<a [routerLink]="'/'+ctx.role()+'/orders'">Orders</a>
+<j-icon name="chevron"/>
+<span>{{ctx.id()}}</span>
+</nav>@if(order();as o){<div class="page-heading">
+<div>
+<span class="eyebrow">{{ctx.role()==='account'?'YOUR ORDER':'ORDER WORKSPACE'}}</span>
+<h1>{{o.id}} <j-badge [text]="o.status"/>
+</h1>
+<p>Placed {{o.date}} · {{o.items.length}} product lines · Demo record</p>
+</div>@if(ctx.role()!=='account'&&auth.has('manageOrders')){<button class="btn btn-primary" (click)="actions.showModal()">Review next action <j-icon name="arrow"/>
+</button>}</div>
+<div class="detail-layout">
+<div>
+<section class="panel">
+<div class="panel-heading">
+<h2>A few good choices.</h2>
+<span class="demo-pill">Sample order</span>
+</div>@for(item of o.items;track item.productId){<div class="order-product">
+<img [src]="image(item.productId)" [alt]="item.name" width="120" height="90"/>
+<div>
+<a [routerLink]="['/shop/products',item.productId]">
+<h3>{{item.name}}</h3>
+</a>
+<p>Quantity {{item.quantity}}</p>
+<j-badge text="Stock supplied by inventory API"/>
+</div>
+<strong>{{item.price*item.quantity|currency:'INR':'symbol':'1.0-0'}}</strong>
+</div>}<div class="summary-line total">
+<span>Order total</span>
+<strong>{{o.total|currency:'INR':'symbol':'1.0-0'}}</strong>
+</div>
+</section>
+<section class="panel">
+<h2>From our store to your door.</h2>
+<j-timeline [entries]="o.timeline"/>
+</section>
+<section class="panel">
+<h2>Shipment details</h2>
+<dl class="detail-grid">
+<div>
+<dt>Shipment status</dt>
+<dd>
+<j-badge [text]="o.shipment"/>
+</dd>
+</div>
+<div>
+<dt>Courier</dt>
+<dd>Awaiting courier configuration</dd>
+</div>
+<div>
+<dt>AWB / tracking number</dt>
+<dd>Not connected</dd>
+</div>
+<div>
+<dt>Tracking link</dt>
+<dd>Available when supplied by the shipment API</dd>
+</div>
+</dl>
+</section>
+</div>
+<aside>
+<section class="panel">
+<h2>{{ctx.role()==='account'?'Your details':'Customer'}}</h2>
+<span class="avatar">{{o.customer.slice(0,1)}}</span>
+<h3>{{o.customer}}</h3>
+<p class="small muted">Contact and address information will be supplied by the customer API. Sensitive details are not included in this demo.</p>
+</section>
+<section class="panel">
+<h2>Payment summary</h2>
+<j-badge [text]="o.payment"/>
+<dl class="summary-list">
+<div>
+<dt>Order value</dt>
+<dd>{{o.total|currency:'INR':'symbol':'1.0-0'}}</dd>
+</div>
+<div>
+<dt>Payment reference</dt>
+<dd>Demo record only</dd>
+</div>
+<div>
+<dt>Refunds</dt>
+<dd>No connected data</dd>
+</div>
+</dl>
+<p class="small muted">Payment state is sample data. No payment is processed by this frontend.</p>
+</section>
+<section class="soft-panel">
+<j-icon name="tool"/>
+<h3>Questions about your order?</h3>
+<a routerLink="/contact" class="text-link">Find the right support <j-icon name="arrow"/>
+</a>
+</section>
+</aside>
+</div>
+<dialog #actions aria-labelledby="order-actions">
+<h2 id="order-actions">Review the next step</h2>
+<p>Current state: <strong>{{o.status}}</strong>. All transitions require backend validation.</p>
+<label>Proposed action<select #next>
+<option>Verify order</option>
+<option>Start processing</option>
+<option>Mark packed</option>
+<option>Prepare courier handover</option>
+<option>Report issue</option>
+</select>
+</label>
+<label>Operational notes<textarea rows="3" placeholder="Explain the next action">
+</textarea>
+</label>
+<div class="alert warning">No status or payment changes will be submitted.</div>
+<div class="dialog-actions">
+<button class="btn btn-outline" (click)="actions.close()">Cancel</button>
+<button class="btn btn-primary" (click)="data.integration(next.value)">Review with API</button>
+</div>
+</dialog>}@else{<j-empty title="Order not found" description="This order is not available in the selected demo account.">
+<a [routerLink]="'/'+ctx.role()+'/orders'" class="btn btn-primary">Back to orders</a>
+</j-empty>}</div>
+
+</j-data-region>

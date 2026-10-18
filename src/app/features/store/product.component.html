@@ -1,0 +1,74 @@
+<div class="container page-space">@if(product();as p){<nav class="breadcrumbs" aria-label="Breadcrumb">
+<a routerLink="/">Home</a>
+<j-icon name="chevron"/>
+<a routerLink="/shop">Shop</a>
+<j-icon name="chevron"/>
+<span>{{p.name}}</span>
+</nav>
+<div class="product-detail">
+<div>
+<div class="gallery-main" [class.zoomed]="zoom()">
+<img [src]="p.image" [alt]="p.name" width="680" height="480"/>
+<button class="btn btn-outline gallery-zoom" (click)="zoom.set(!zoom())">{{zoom()?'Reset view':'Zoom illustration'}}</button>
+</div>
+<div class="gallery-thumbs">
+<button class="selected" aria-label="Product illustration">
+<img [src]="p.image" [alt]="p.name" width="80" height="60"/>
+</button>
+<p>Illustrative product artwork.<br>Manufacturer photos will be supplied by the catalogue API.</p>
+</div>
+<section class="spec-section">
+<h2>The details that matter.</h2>
+<p>{{p.description}}</p>
+<h3>Specifications</h3>
+<dl class="spec-table">@for(spec of p.specs|keyvalue;track spec.key){<div>
+<dt>{{spec.key}}</dt>
+<dd>{{spec.value}}</dd>
+</div>}</dl>
+</section>
+</div>
+<div class="purchase-panel">
+<span class="eyebrow">{{p.brand}} · {{p.category}}</span>
+<h1>{{p.name}}</h1>
+<p class="muted">SKU: {{p.id.toUpperCase()}}</p>
+<div class="detail-rating">
+<j-icon name="star"/> {{p.rating ?? 'Not rated'}} <span>Sample catalogue rating</span>
+</div>
+<div class="detail-price">
+<strong>{{p.price|currency:'INR':'symbol':'1.0-0'}}</strong>@if(p.originalPrice){<del>{{p.originalPrice|currency:'INR':'symbol':'1.0-0'}}</del>}</div>
+<p class="muted small">Sample price · Final taxes and availability confirmed by API.</p>
+<j-badge [text]="p.stock?'In stock · '+p.stock+' available':'Out of stock'"/>
+<ul class="product-highlights">@for(spec of p.specs|keyvalue;track spec.key){<li>
+<j-icon name="check"/>{{spec.value}}</li>}</ul>
+<div class="purchase-actions">
+<div class="quantity-control">
+<button aria-label="Decrease quantity" [disabled]="quantity()<=1" (click)="quantity.set(quantity()-1)">−</button>
+<span>{{quantity()}}</span>
+<button aria-label="Increase quantity" [disabled]="quantity()>=p.stock" (click)="quantity.set(quantity()+1)">+</button>
+</div>
+<button class="btn btn-primary" [disabled]="!p.stock" (click)="data.addToCart(p,quantity())">
+<j-icon name="cart"/> Add to cart</button>
+</div>
+<a routerLink="/cart" class="btn btn-outline full-width">View your cart <j-icon name="arrow"/>
+</a>
+<div class="purchase-help">
+<j-icon name="shield"/>
+<div>
+<strong>Buy with a little guidance.</strong>
+<p>Have questions about compatibility or warranty? Our team can help.</p>
+<a routerLink="/contact" class="text-link">Ask Jerry Computers <j-icon name="arrow"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<section class="section">
+<div class="section-heading">
+<h2>A few good companions.</h2>
+<a routerLink="/shop" class="text-link">Explore more <j-icon name="arrow"/>
+</a>
+</div>
+<div class="product-grid">@for(related of data.products().filter(excludeCurrent).slice(0,4);track related.id){<j-product-card [product]="related"/>}</div>
+</section>}@else{<j-empty title="We couldn’t find that product" description="It may have moved or is no longer in this demo catalogue.">
+<a routerLink="/shop" class="btn btn-primary">Back to shop</a>
+</j-empty>}</div>

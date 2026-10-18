@@ -1,0 +1,7 @@
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { EmptyComponent, SkeletonComponent } from './ui.component';
+@Component({ selector: 'j-data-region', imports: [EmptyComponent, SkeletonComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: `<details class="state-inspector"><summary>Demo data states</summary><label>Preview {{label()}} state<select [value]="state()" (change)="state.set($any($event.target).value)"><option value="ready">Ready</option><option value="loading">Loading</option><option value="empty">Empty</option><option value="error">Error</option></select></label><small>Visual QA controls. No network request is made.</small></details>@switch(state()){@case('loading'){<div class="data-region-feedback" role="status" aria-live="polite"><h2>Getting your {{label().toLowerCase()}} ready…</h2><j-skeleton/><j-skeleton/></div>}@case('error'){<j-empty icon="wifi" [title]="'We couldn’t load your '+label().toLowerCase()" description="Your local preview has not changed. Try again to return to the sample records."><button class="btn btn-primary" (click)="state.set('ready')">Try again</button></j-empty>}@case('empty'){<j-empty icon="box" [title]="'No '+label().toLowerCase()+' here yet'" description="When records are available from the service API, they’ll appear here."><button class="btn btn-outline" (click)="state.set('ready')">Explore sample records</button></j-empty>}@default{<ng-content/>}}` })
+export class DataRegionComponent {
+    label = input('Records');
+    state = signal('ready');
+}

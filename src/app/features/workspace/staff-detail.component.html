@@ -1,0 +1,59 @@
+<j-data-region label="Staff profile">
+<div class="workspace-page">
+<nav class="breadcrumbs">
+<a routerLink="/admin/staff">Staff</a>
+<j-icon name="chevron"/>
+<span>{{ctx.id()}}</span>
+</nav>@if(engineer();as e){<div class="page-heading">
+<div>
+<span class="eyebrow">STAFF PROFILE</span>
+<h1>{{e.name}}</h1>
+<p>{{e.id}} · {{e.branch}} · Demo profile</p>
+</div>
+<button class="btn btn-primary" (click)="editing.set(true)">Review access & profile <j-icon name="arrow"/>
+</button>
+</div>
+<div class="two-column">
+<section class="panel">
+<span class="avatar large">{{e.initials}}</span>
+<h2>{{e.name}}</h2>
+<j-badge [text]="e.status"/>
+<dl class="summary-list">
+<div>
+<dt>Role</dt>
+<dd>Service engineer</dd>
+</div>
+<div>
+<dt>Branch</dt>
+<dd>{{e.branch}}</dd>
+</div>
+<div>
+<dt>Active assignments</dt>
+<dd>{{e.jobs}}</dd>
+</div>
+<div>
+<dt>Skills</dt>
+<dd>{{e.skills.join(', ')}}</dd>
+</div>
+</dl>
+</section>
+<section class="panel">
+<h2>Workspace capabilities</h2>
+<ul class="capability-list">
+<li>
+<j-icon name="check"/>View assigned jobs</li>
+<li>
+<j-icon name="check"/>Add diagnosis and work history</li>
+<li>
+<j-icon name="check"/>Request parts and escalation</li>
+<li>
+<j-icon name="check"/>View personal attendance</li>
+</ul>
+<div class="alert warning">Privileges are a frontend configuration preview. Backend authorization is required for all real access.</div>
+<button class="btn btn-outline" (click)="data.integration('Account activation / deactivation')">Review activation state</button>
+</section>
+</div>@if(editing()){<j-entity-panel kind="staff" [row]="{id:e.id,name:e.name,branch:e.branch,skills:e.skills.join(', '),status:e.status}" (closed)="editing.set(false)"/>}}@else{<j-empty title="Staff profile not found" description="Choose a staff member from the demo list.">
+<a routerLink="/admin/staff" class="btn btn-primary">Back to staff</a>
+</j-empty>}</div>
+
+</j-data-region>

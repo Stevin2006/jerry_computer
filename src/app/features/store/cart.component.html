@@ -1,0 +1,69 @@
+<div class="container page-space">
+<nav class="breadcrumbs">
+<a routerLink="/">Home</a>
+<j-icon name="chevron"/>
+<span>Your cart</span>
+</nav>
+<div class="page-heading">
+<div>
+<span class="eyebrow">A FEW GOOD CHOICES</span>
+<h1>Your next upgrade, almost yours.</h1>
+<p>{{data.cartCount()}} items in your demo cart.</p>
+</div>
+<a routerLink="/shop" class="text-link">Keep exploring <j-icon name="arrow"/>
+</a>
+</div>@if(data.cart().length){<div class="checkout-layout">
+<section class="cart-items">@for(item of data.cart();track item.product.id){<article class="cart-item">
+<a [routerLink]="['/shop/products',item.product.id]">
+<img [src]="item.product.image" [alt]="item.product.name" width="150" height="110"/>
+</a>
+<div>
+<small class="eyebrow">{{item.product.brand}}</small>
+<a [routerLink]="['/shop/products',item.product.id]">
+<h3>{{item.product.name}}</h3>
+</a>
+<span class="stock-note">● In stock</span>
+<div class="quantity-control">
+<button aria-label="Decrease quantity" (click)="data.changeQuantity(item.product.id,item.quantity-1)">−</button>
+<span>{{item.quantity}}</span>
+<button aria-label="Increase quantity" [disabled]="item.quantity>=item.product.stock" (click)="data.changeQuantity(item.product.id,item.quantity+1)">+</button>
+</div>
+</div>
+<div class="cart-item-end">
+<strong>{{item.product.price*item.quantity|currency:'INR':'symbol':'1.0-0'}}</strong>
+<button class="text-button" (click)="removeId.set(item.product.id);confirm.showModal()">
+<j-icon name="trash"/> Remove</button>
+</div>
+</article>}</section>
+<aside class="summary-panel">
+<h2>Order summary</h2>
+<div class="summary-line">
+<span>Subtotal</span>
+<strong>{{data.subtotal()|currency:'INR':'symbol':'1.0-0'}}</strong>
+</div>
+<div class="summary-line">
+<span>Delivery</span>
+<span>Confirmed at checkout</span>
+</div>
+<div class="summary-line total">
+<span>Estimated total</span>
+<strong>{{data.subtotal()|currency:'INR':'symbol':'1.0-0'}}</strong>
+</div>
+<a routerLink="/checkout" class="btn btn-primary full-width">Continue to checkout <j-icon name="arrow"/>
+</a>
+<p class="small muted">This is a frontend preview. No order or payment will be submitted.</p>
+<div class="summary-note">
+<j-icon name="shield"/> Clear details. Confident choices.</div>
+</aside>
+</div>}@else{<j-empty icon="cart" title="A little room for possibility." description="Your cart is empty. Find the right technology for your next big idea.">
+<a routerLink="/shop" class="btn btn-primary">Explore the collection <j-icon name="arrow"/>
+</a>
+</j-empty>}<dialog #confirm aria-labelledby="remove-title">
+<h2 id="remove-title">Remove this item?</h2>
+<p>You can always add it back from the shop.</p>
+<div class="dialog-actions">
+<button class="btn btn-outline" (click)="confirm.close()">Keep item</button>
+<button class="btn btn-primary" (click)="data.changeQuantity(removeId(),0);confirm.close()">Remove from cart</button>
+</div>
+</dialog>
+</div>

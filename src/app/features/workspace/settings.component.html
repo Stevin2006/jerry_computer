@@ -1,0 +1,111 @@
+<div class="workspace-page settings-page">
+<div class="page-heading">
+<div>
+<span class="eyebrow">{{branding?'YOUR STORE, YOUR IDENTITY':'MAKE YOURSELF AT HOME'}}</span>
+<h1>{{branding?'Distinctly Jerry. Everywhere.':profile?'Your details, thoughtfully kept.':'A workspace that works for you.'}}</h1>
+<p>{{branding?'Keep your store identity, branch details and brand colours together.':'Manage your preferences and prepare details for future API integration.'}}</p>
+</div>
+</div>
+<div class="tabs" role="group" aria-label="Settings sections">@if(!profile){<a routerLink="/admin/settings" [class.active]="!branding">General</a>
+<a routerLink="/admin/settings/branding" [class.active]="branding">Branding & branches</a>}@else{<span class="active">Profile & preferences</span>}</div>
+<form [formGroup]="form" (ngSubmit)="submit()">
+<section class="settings-section">
+<div>
+<h2>{{branding?'Store identity':'Your information'}}</h2>
+<p>{{branding?'The name and contact details customers see.':'Keep your contact information up to date.'}}</p>
+</div>
+<div class="form-stack">
+<label>{{branding?'Store name':'Full name'}}<input formControlName="name" [attr.aria-invalid]="submitted()&&form.controls.name.invalid"/>
+</label>
+<div class="form-grid">
+<label>Email address<input type="email" formControlName="email"/>
+</label>
+<label>Phone number<input type="tel" formControlName="phone"/>
+</label>
+</div>@if(branding){<label>Store tagline<input formControlName="tagline"/>
+</label>
+<div class="form-grid">
+<div>
+<h3>Store logo</h3>
+<j-uploader title="Choose a store logo" [multiple]="false"/>
+</div>
+<div>
+<h3>Favicon</h3>
+<j-uploader title="Choose a favicon image" [multiple]="false"/>
+</div>
+</div>}</div>
+</section>@if(branding){<section class="settings-section">
+<div>
+<h2>Brand colours</h2>
+<p>One consistent identity across the storefront and operations.</p>
+</div>
+<div class="form-stack">
+<div class="form-grid">
+<label>Primary colour<div class="color-field">
+<input type="color" formControlName="primary"/>
+<span>{{form.controls.primary.value}}</span>
+</div>
+</label>
+<label>Secondary colour<div class="color-field">
+<input type="color" formControlName="secondary"/>
+<span>{{form.controls.secondary.value}}</span>
+</div>
+</label>
+</div>
+<div class="brand-preview" [style.background]="form.controls.primary.value" [style.color]="form.controls.secondary.value">
+<img src="/favicon.svg" width="40" height="40" alt="Current brand icon"/>
+<strong>{{form.controls.name.value}}</strong>
+<span>{{form.controls.tagline.value}}</span>
+</div>
+<p class="small muted">Colours are previewed here only. Production themes require contrast review before applying.</p>
+</div>
+</section>
+<section class="settings-section">
+<div>
+<h2>Your branches</h2>
+<p>Store contact information and office location configuration.</p>
+</div>
+<div class="form-stack">
+<label>Branch name<input formControlName="branch"/>
+</label>
+<label>Branch address<textarea formControlName="address" rows="3">
+</textarea>
+</label>
+<div class="form-grid">
+<label>Branch phone<input type="tel" formControlName="branchPhone"/>
+</label>
+<label>Branch status<select formControlName="branchStatus">
+<option>Active</option>
+<option>Inactive</option>
+</select>
+</label>
+</div>
+<a routerLink="/admin/attendance/locations" class="text-link">Manage location & 200-meter requirement <j-icon name="arrow"/>
+</a>
+</div>
+</section>}<section class="settings-section">
+<div>
+<h2>Preferences</h2>
+<p>Keep your experience clear and comfortable.</p>
+</div>
+<div class="form-stack">
+<label>Preferred appearance<select formControlName="theme">
+<option>System</option>
+<option>Light</option>
+<option>Dark</option>
+</select>
+<span class="field-hint">Use the header account menu to preview the active theme.</span>
+</label>
+<label class="check-row">
+<input type="checkbox" formControlName="orderUpdates"/>Order and shipment updates</label>
+<label class="check-row">
+<input type="checkbox" formControlName="serviceUpdates"/>Service and appointment updates</label>
+<p class="small muted">Delivery preferences will be connected to the notification API.</p>
+</div>
+</section>@if(submitted()&&form.invalid){<p class="field-error" role="alert">Enter a name and a valid email address if provided.</p>}<div class="form-footer">
+<span class="small muted">Local preview · no persistent settings</span>
+<button class="btn btn-primary" type="submit">Review settings <j-icon name="arrow"/>
+</button>
+</div>
+</form>
+</div>

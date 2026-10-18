@@ -1,0 +1,19 @@
+<article class="product-card">
+<a class="product-image" [routerLink]="['/shop/products', product().id]" [attr.aria-label]="'View '+product().name">@if(product().originalPrice){<span class="discount">{{ discount() }}% OFF</span>}<img [src]="product().image" [alt]="product().name" width="340" height="240" loading="lazy"/>
+</a>
+<div class="product-body">
+<div class="product-meta">
+<span>{{ product().brand }}</span>@if(product().rating){<span class="rating">
+<j-icon name="star"/> {{ product().rating }}</span>}</div>
+<a [routerLink]="['/shop/products', product().id]" class="product-name">{{ product().name }}</a>
+<p class="product-spec">{{ spec() }}</p>
+<div class="product-bottom">
+<div>
+<strong>{{ product().price | currency:'INR':'symbol':'1.0-0' }}</strong>@if(product().originalPrice){<del>{{ product().originalPrice | currency:'INR':'symbol':'1.0-0' }}</del>}</div>
+<button class="add-button" [disabled]="!product().stock" (click)="data.addToCart(product())" [attr.aria-label]="'Add '+product().name+' to cart'">
+<j-icon name="plus"/>
+</button>
+</div>
+<span class="stock-note" [class.sold-out]="!product().stock">{{ product().stock ? '● In stock' : '○ Out of stock' }}</span>
+</div>
+</article>

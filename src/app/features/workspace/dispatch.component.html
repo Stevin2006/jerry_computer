@@ -1,0 +1,125 @@
+<j-data-region label="Dispatch records">
+<div class="workspace-page">
+<div class="page-heading">
+<div>
+<span class="eyebrow">SERVICE OPERATIONS</span>
+<h1>The right people. The next right job.</h1>
+<p>A clear view of the queue, availability and today’s appointments.</p>
+</div>
+<a [routerLink]="'/'+ctx.role()+'/services/new'" class="btn btn-primary">
+<j-icon name="plus"/>New service intake</a>
+</div>
+<div class="demo-banner">Dispatch preview · Assignment changes require the service API. No automatic assignment is performed.</div>
+<div class="dispatch-toolbar">
+<div class="search-input">
+<j-icon name="search"/>
+<input aria-label="Search dispatch queue" placeholder="Search ticket, customer or device" (input)="query.set($any($event.target).value)"/>
+</div>
+<select aria-label="Dispatch branch">
+<option>Main showroom · demo</option>
+</select>
+<select aria-label="Service mode" (change)="mode.set($any($event.target).value)">
+<option value="all">All service modes</option>
+<option>In-store</option>
+<option>On-site</option>
+</select>
+<select aria-label="Dispatch priority" (change)="priority.set($any($event.target).value)">
+<option value="all">All priorities</option>
+<option>Critical</option>
+<option>High</option>
+<option>Normal</option>
+<option>Low</option>
+</select>
+</div>
+<div class="dispatch-layout">
+<section>
+<div class="section-heading compact">
+<h2>Service queue <span class="count-bubble">{{tickets().length}}</span>
+</h2>
+<span class="muted small">Review priority before assigning</span>
+</div>@for(t of tickets();track t.id){<article class="dispatch-ticket" [class.critical-ticket]="t.priority==='Critical'">
+<div class="job-card-top">
+<a [routerLink]="'/'+ctx.role()+'/services/'+t.id" class="mono">{{t.id}}</a>
+<div class="inline-badges">
+<j-badge [text]="t.priority"/>
+<j-badge [text]="t.status"/>
+</div>
+</div>
+<h3>{{t.device}}</h3>
+<p>{{t.issue}}</p>
+<div class="dispatch-meta">
+<span>
+<j-icon name="user"/>{{t.customer}}</span>
+<span>
+<j-icon name="location"/>{{t.mode}} · {{t.branch}}</span>
+<span>
+<j-icon name="clock"/>{{t.appointment.replace('T',' · ')}}</span>
+</div>
+<div class="dispatch-bottom">
+<span>Assigned to <strong>{{t.engineer}}</strong>
+</span>
+<button class="btn btn-outline" [disabled]="!auth.has('manageServices')" (click)="selected.set(t.id);assignment.showModal()">{{t.engineer==='Unassigned'?'Assign engineer':'Review assignment'}}<j-icon name="arrow"/>
+</button>
+</div>
+<small class="priority-reason">{{t.priorityReason}}</small>
+</article>}@empty{<j-empty title="The queue is clear for this view" description="Change your filters to see more service requests."/>}</section>
+<aside>
+<div class="section-heading compact">
+<h2>Engineer availability</h2>
+<span class="demo-pill">Demo</span>
+</div>
+<div class="engineer-availability">@for(e of data.engineers();track e.id){<article>
+<div class="engineer-row">
+<span class="avatar">{{e.initials}}</span>
+<div>
+<strong>{{e.name}}</strong>
+<small>{{e.skills.join(' · ')}}</small>
+</div>
+<j-badge [text]="e.status"/>
+</div>
+<div class="workload-bar">
+<span [style.width.%]="e.jobs*30">
+</span>
+</div>
+<div class="range-labels">
+<span>{{e.jobs}} active jobs</span>
+<span>{{e.branch}}</span>
+</div>
+<small class="muted">Service area supplied by engineer profile API</small>
+</article>}</div>
+<section class="panel">
+<h2>Upcoming appointments</h2>@for(t of tickets();track t.id){<a [routerLink]="'/'+ctx.role()+'/services/'+t.id" class="appointment-row">
+<div class="appointment-time">{{t.appointment.split('T')[1]}}</div>
+<div>
+<strong>{{t.device}}</strong>
+<small>{{t.id}} · {{t.mode}}</small>
+</div>
+</a>}</section>
+<div class="status-legend">
+<span>
+<i class="legend-dot">
+</i>Available</span>
+<span>◐ Busy</span>
+<span>○ Offline</span>
+<span>⚑ Overloaded / delayed</span>
+</div>
+</aside>
+</div>
+<dialog #assignment aria-labelledby="assign-title">
+<h2 id="assign-title">Review assignment · {{selected()}}</h2>
+<p>Choose an engineer based on skills, availability and the appointment.</p>
+<label>Engineer<select #engineer>
+<option value="">Select an engineer</option>@for(e of data.engineers();track e.id){<option [disabled]="e.status==='Offline'" [value]="e.id">{{e.name}} · {{e.status}} · {{e.jobs}} jobs</option>}</select>
+</label>
+<label>Dispatch notes<textarea rows="3" placeholder="Service area, timing or handover details">
+</textarea>
+</label>
+<div class="alert warning">This preview does not assign the ticket. Assignment will be connected to the service API.</div>
+<div class="dialog-actions">
+<button class="btn btn-outline" (click)="assignment.close()">Cancel</button>
+<button class="btn btn-primary" [disabled]="!engineer.value||!auth.has('manageServices')" (click)="data.integration('Service assignment')">Review assignment</button>
+</div>
+</dialog>
+</div>
+
+</j-data-region>

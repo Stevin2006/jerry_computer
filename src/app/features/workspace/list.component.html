@@ -1,0 +1,57 @@
+<div class="workspace-page">
+<nav class="breadcrumbs">
+<a [routerLink]="role()==='account'?'/account':'/'+role()+'/dashboard'">Overview</a>
+<j-icon name="chevron"/>
+<span>{{title()}}</span>
+</nav>
+<div class="page-heading">
+<div>
+<span class="eyebrow">{{section()}}</span>
+<h1>{{title()}}</h1>
+<p>{{description()}}</p>
+</div>@if(createLink()){<a [routerLink]="createLink()" class="btn btn-primary">
+<j-icon name="plus"/>{{createLabel()}}</a>}@else if(kind()==='staff'||kind()==='categories'||kind()==='shipments'||kind()==='inventory'||kind()==='locations'||kind()==='escalations'){<button class="btn btn-primary" (click)="selected.set({id:'new'})">
+<j-icon name="plus"/>{{kind()==='staff'?'Invite staff':kind()==='shipments'?'Create shipment':kind()==='inventory'?'Adjust stock':kind()==='locations'?'Add office location':kind()==='escalations'?'Request escalation':'Add category'}}</button>}</div>
+<div class="demo-banner">Sample {{title().toLowerCase()}} · No live API connection</div>
+<div class="list-summary">
+<span>
+<strong>{{rows().length}}</strong> {{title().toLowerCase()}} in this view</span>
+<span>Updated in local preview only</span>
+<label class="demo-state">Preview state <select (change)="state.set($any($event.target).value)">
+<option value="ready">Ready</option>
+<option value="loading">Loading</option>
+<option value="empty">Empty</option>
+<option value="error">Error</option>
+</select>
+</label>
+</div>
+<j-data-table [initialQuery]="queries()?.get('q')??''" [label]="title()" [columns]="columns()" [rows]="state()==='empty'?[]:rows()" [state]="state()" (retry)="state.set('ready')" (inspect)="selected.set($event)">@if(['inventory','services','jobs','attendance','locations'].includes(kind())){<select filters aria-label="Branch filter">
+<option>Main showroom · demo</option>
+</select>}@if(kind()==='services'||kind()==='jobs'){<select filters aria-label="Priority filter" (change)="priority.set($any($event.target).value)">
+<option value="all">All priorities</option>
+<option>Critical</option>
+<option>High</option>
+<option>Normal</option>
+<option>Low</option>
+</select>}@if(kind()==='attendance'){<input filters type="date" aria-label="Attendance date" (change)="date.set($any($event.target).value)"/>}</j-data-table>@if(kind()==='inventory'){<section class="soft-panel">
+<h2>Stock movement history</h2>
+<p>Movement records are supplied by the inventory API. Adjustments entered here are previews and do not change stock.</p>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Product</th>
+<th>Movement</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>17 Oct 2026 · demo</td>
+<td>Kingston NV2 1 TB SSD</td>
+<td>−1 · sample order</td>
+<td>JC-1045</td>
+</tr>
+</tbody>
+</table>
+</section>}@if(selected();as row){<j-entity-panel [kind]="kind()" [row]="row" (closed)="selected.set(null)"/>}</div>

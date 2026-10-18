@@ -1,0 +1,40 @@
+<j-data-region label="Notifications">
+<div class="workspace-page">
+<div class="page-heading">
+<div>
+<span class="eyebrow">KEEPING YOU IN THE LOOP</span>
+<h1>A few things to catch up on.</h1>
+<p>Orders, device care and useful updates, together.</p>
+</div>
+<button class="btn btn-outline" (click)="data.markRead()">
+<j-icon name="check"/>Mark all read</button>
+</div>
+<div class="notification-filters">
+<div class="tabs" role="group" aria-label="Read state">
+<button [class.active]="!unreadOnly()" (click)="unreadOnly.set(false)">All updates</button>
+<button [class.active]="unreadOnly()" (click)="unreadOnly.set(true)">Unread <span class="count-bubble">{{data.unread()}}</span>
+</button>
+</div>
+<select aria-label="Notification category" (change)="category.set($any($event.target).value)">
+<option value="all">All categories</option>@for(c of ['Order','Shipment','Service','Dispatch','Escalation','Attendance','Inventory','Admin'];track c){<option>{{c}}</option>}</select>
+</div>
+<section class="notification-center">@for(n of visible();track n.id){<article [class.unread]="!n.read">
+<span class="notification-symbol">
+<j-icon [name]="n.category==='Service'?'tool':n.category==='Shipment'?'truck':'bell'"/>
+</span>
+<div>
+<div class="notification-title">
+<h3>{{n.title}}</h3>
+<j-badge [text]="n.category"/>
+</div>
+<p>{{n.detail}}</p>
+<small>{{n.date}}</small>
+<a [routerLink]="n.link" (click)="data.markRead(n.id)" class="text-link">View update <j-icon name="arrow"/>
+</a>
+</div>
+<button class="text-button" [disabled]="n.read" (click)="data.markRead(n.id)">{{n.read?'Read':'Mark read'}}</button>
+</article>}@empty{<j-empty icon="bell" title="You’re all caught up." description="New updates will appear here. Notification delivery will be connected later."/>}</section>
+<p class="sample-caption">Sample notifications. Read states are stored only in this browser session’s memory.</p>
+</div>
+
+</j-data-region>

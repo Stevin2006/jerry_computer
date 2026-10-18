@@ -1,0 +1,15 @@
+import { Routes } from '@angular/router';
+import { Role } from '../../core/models';
+const list = (path: string): Routes[number] => ({ path, data: { kind: path === 'attendance/locations' ? 'locations' : path }, loadComponent: () => import('./list.component').then(m => m.ListComponent) });
+export function workspaceRoutes(role: Role): Routes {
+    const common: Routes = [{ path: '', pathMatch: 'full', redirectTo: 'dashboard' }, { path: 'dashboard', loadComponent: () => import('./dashboard.component').then(m => m.DashboardComponent) }, { path: 'notifications', loadComponent: () => import('./notifications.component').then(m => m.NotificationsComponent) }, { path: 'profile', data: { kind: 'profile' }, loadComponent: () => import('./settings.component').then(m => m.SettingsComponent) }];
+    if (role === 'engineer')
+        return [...common, list('jobs'), { path: 'jobs/:id', loadComponent: () => import('./service-detail.component').then(m => m.ServiceDetailComponent) }, list('escalations'), { path: 'attendance', loadComponent: () => import('./attendance.component').then(m => m.AttendanceComponent) }, { path: 'performance', loadComponent: () => import('./reports.component').then(m => m.ReportsComponent) }];
+    const commerce: Routes = [list('orders'), { path: 'orders/:id', loadComponent: () => import('./order-detail.component').then(m => m.OrderDetailComponent) }, list('shipments'), list('customers')];
+    if (role === 'ecommerce')
+        return [...common, ...commerce, { path: 'reports', loadComponent: () => import('./reports.component').then(m => m.ReportsComponent) }];
+    const service: Routes = [list('services'), { path: 'services/new', loadComponent: () => import('../forms/service-form.component').then(m => m.ServiceFormComponent) }, { path: 'services/:id', loadComponent: () => import('./service-detail.component').then(m => m.ServiceDetailComponent) }, list('engineers'), list('escalations'), { path: 'dispatch', loadComponent: () => import('./dispatch.component').then(m => m.DispatchComponent) }];
+    if (role === 'office')
+        return [...common, ...service];
+    return [...common, ...commerce, ...service, list('products'), { path: 'products/new', loadComponent: () => import('../forms/product-form.component').then(m => m.ProductFormComponent) }, { path: 'products/:id/edit', loadComponent: () => import('../forms/product-form.component').then(m => m.ProductFormComponent) }, list('categories'), list('inventory'), list('staff'), { path: 'staff/:id', loadComponent: () => import('./staff-detail.component').then(m => m.StaffDetailComponent) }, list('attendance'), list('attendance/locations'), list('payroll'), { path: 'payroll/:id', loadComponent: () => import('./payroll-detail.component').then(m => m.PayrollDetailComponent) }, { path: 'reports', loadComponent: () => import('./reports.component').then(m => m.ReportsComponent) }, { path: 'settings', data: { kind: 'settings' }, loadComponent: () => import('./settings.component').then(m => m.SettingsComponent) }, { path: 'settings/branding', data: { kind: 'branding' }, loadComponent: () => import('./settings.component').then(m => m.SettingsComponent) }];
+}

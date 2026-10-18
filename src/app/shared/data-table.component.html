@@ -1,0 +1,40 @@
+<div class="data-table-panel">
+<div class="table-toolbar">
+<div class="search-input">
+<j-icon name="search"/>
+<input [attr.aria-label]="'Search '+label()" [placeholder]="'Search '+label().toLowerCase()+'…'" [value]="query()" (input)="query.set($any($event.target).value);page.set(1)"/>
+</div>@if(statusOptions().length){<select [attr.aria-label]="'Filter '+label()+' by status'" (change)="status.set($any($event.target).value);page.set(1)">
+<option value="all">All statuses</option>@for(s of statusOptions();track s){<option>{{s}}</option>}</select>}<ng-content select="[filters]"/>
+<button class="btn btn-outline" (click)="exportRows()">
+<j-icon name="upload"/>Export CSV</button>
+</div>@if(state()==='loading'){<div class="table-state">
+<j-skeleton/>
+</div>}@else if(state()==='error'){<j-empty icon="wifi" title="We couldn’t load these records" description="Please try again. No data was changed.">
+<button class="btn btn-primary" (click)="retry.emit()">Try again</button>
+</j-empty>}@else{<div class="table-scroll">
+<table>
+<caption class="sr-only">{{label()}} · demo records</caption>
+<thead>
+<tr>@for(c of columns();track c.key){<th scope="col">{{c.label}}</th>}<th scope="col">
+<span class="sr-only">Details</span>
+</th>
+</tr>
+</thead>
+<tbody>@for(row of visible();track row.id){<tr>@for(c of columns();track c.key){<td [class.secondary-cell]="c.secondary">@if(c.badge){<j-badge [text]="cell(row,c.key)"/>}@else if(c.key==='id'&&row.link){<a [routerLink]="row.link" class="table-primary-link">{{cell(row,c.key)}}</a>}@else{<span>{{cell(row,c.key)}}</span>}</td>}<td>@if(row.link){<a [routerLink]="row.link" class="icon-button" [attr.aria-label]="'View '+row.id">
+<j-icon name="chevron"/>
+</a>}@else{<button class="icon-button" [attr.aria-label]="'Inspect '+row.id" (click)="inspect.emit(row)">
+<j-icon name="chevron"/>
+</button>}</td>
+</tr>}</tbody>
+</table>
+</div>@if(!filtered().length){<j-empty title="No records match this view" description="Try a different search or clear the status filter.">
+<button class="btn btn-outline" (click)="query.set('');status.set('all')">Clear filters</button>
+</j-empty>}}<div class="pagination">
+<span>{{filtered().length}} records · Page {{safePage()}} of {{pages()}}</span>
+<div>
+<button class="btn btn-outline" [disabled]="safePage()<=1" (click)="page.set(safePage()-1)">Previous</button>
+<button class="btn btn-outline" [disabled]="safePage()>=pages()" (click)="page.set(safePage()+1)">Next <j-icon name="arrow"/>
+</button>
+</div>
+</div>
+</div>

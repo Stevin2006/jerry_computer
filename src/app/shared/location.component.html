@@ -1,0 +1,14 @@
+<div class="location-picker">
+<div class="map-placeholder">
+<j-icon name="location"/>
+<strong>{{coordinates()?'Location captured · map not connected':'Choose your service location'}}</strong>
+<span>{{coordinates()||'Use browser location or enter your address manually.'}}</span>
+</div>
+<div class="location-actions">
+<button type="button" class="btn btn-outline" [disabled]="state()==='loading'" (click)="capture()">
+<j-icon name="location"/>{{state()==='loading'?'Requesting location…':'Use my current location'}}</button>
+<button type="button" class="text-button" (click)="state.set('manual');coordinates.set('')">Enter address manually</button>
+</div>
+<p class="location-status" role="status">{{message()}}</p>
+<small class="muted">Location is requested only after you select the button. No background tracking or geofence verification is performed.</small>
+</div>

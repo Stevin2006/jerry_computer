@@ -1,0 +1,91 @@
+<j-data-region label="Payroll details">
+<div class="workspace-page">
+<nav class="breadcrumbs">
+<a routerLink="/admin/payroll">Payroll</a>
+<j-icon name="chevron"/>
+<span>{{ctx.id()}}</span>
+</nav>@if(record();as p){<div class="page-heading">
+<div>
+<span class="eyebrow">PAY PERIOD · {{p.period}}</span>
+<h1>A clear view of the pay period.</h1>
+<p>{{p.employee}} · {{p.id}} · Supplied mock figures</p>
+</div>
+<j-badge [text]="p.status"/>
+</div>
+<div class="detail-layout">
+<section class="panel payslip">
+<div class="payslip-heading">
+<img src="/favicon.svg" width="40" height="40" alt="Jerry Computers"/>
+<div>
+<h2>Jerry Computers</h2>
+<span>Payslip preview · Not an official payslip</span>
+</div>
+</div>
+<div class="detail-grid">
+<div>
+<span class="muted">Employee</span>
+<h3>{{p.employee}}</h3>
+</div>
+<div>
+<span class="muted">Pay period</span>
+<h3>{{p.period}}</h3>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th>Pay component</th>
+<th>Supplied value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Attendance days</td>
+<td>{{p.days}}</td>
+</tr>
+<tr>
+<td>Overtime</td>
+<td>{{p.overtime}}</td>
+</tr>
+<tr>
+<td>Allowances</td>
+<td>{{p.allowances|currency:'INR':'symbol':'1.0-0'}}</td>
+</tr>
+<tr>
+<td>Bonuses</td>
+<td>{{p.bonus|currency:'INR':'symbol':'1.0-0'}}</td>
+</tr>
+<tr>
+<td>Deductions</td>
+<td>{{p.deductions|currency:'INR':'symbol':'1.0-0'}}</td>
+</tr>
+</tbody>
+</table>
+<div class="summary-line total">
+<span>Supplied sample net pay</span>
+<strong>{{p.net|currency:'INR':'symbol':'1.0-0'}}</strong>
+</div>
+<p class="small muted">Net pay is a mock backend-calculated figure. This frontend does not calculate payroll, tax, overtime or deductions.</p>
+</section>
+<aside>
+<section class="panel">
+<h2>Payroll workflow</h2>
+<ol class="plain-steps">
+<li>Review attendance & adjustments</li>
+<li>Receive calculated payroll from API</li>
+<li>Authorised approval in backend</li>
+<li>Publish official payslip</li>
+</ol>
+<label>Adjustment notes<textarea rows="4" placeholder="Record a proposed adjustment for review">
+</textarea>
+</label>
+<button class="btn btn-outline full-width" [disabled]="!auth.has('managePayroll')" (click)="data.integration('Payroll adjustment')">Review adjustment</button>
+<button class="btn btn-primary full-width" [disabled]="!auth.has('managePayroll')" (click)="data.integration('Payroll approval')">Review approval dependency</button>
+</section>
+<div class="alert warning">No payroll changes, approval or publication is performed in this preview.</div>
+</aside>
+</div>}@else{<j-empty title="Payroll record not found" description="Choose an available sample pay record.">
+<a routerLink="/admin/payroll" class="btn btn-primary">Back to payroll</a>
+</j-empty>}</div>
+
+</j-data-region>
